@@ -44,8 +44,10 @@ def new_post():
         new_blog = Blog(name,entry)
         db.session.add(new_blog)
         db.session.commit()
+        return redirect('/blog')
 
-    return render_template('newpost.html')
+    else:
+        return render_template('newpost.html')
 
 
 
