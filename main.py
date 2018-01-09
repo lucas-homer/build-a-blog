@@ -38,16 +38,39 @@ def index():
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
 
-    if request.method == 'POST':
+    if request.method == 'GET':
+        return render_template('newpost.html')
+
+    elif request.method == 'POST':
         name = request.form['name']
         entry = request.form['entry']
-        new_blog = Blog(name,entry)
-        db.session.add(new_blog)
-        db.session.commit()
-        return redirect('/blog')
+        name_error = ''
+        entry_error = ''
 
-    else:
-        return render_template('newpost.html')
+        if "" == name:
+            name_error = 'Title your blog'
+            name = ''
+        if "" == entry:
+            entry_error = 'You have to write something!'
+            entry = ''
+    
+        if name_error or entry_error:
+            return render_template('newpost.html', name=name, entry=entry, name_error=name_error, entry_error=entry_error)
+
+        else:
+            new_blog = Blog(name,entry)
+            name = request.form['name']
+            entry = request.form['entry']
+            
+            db.session.add(new_blog)
+            db.session.commit()
+            blog = Blog.query.filter_by(name=name).first()
+            return render_template('singlepost.html', blog=blog)
+    
+        
+            
+
+    
 
 
 
